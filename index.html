@@ -2,7 +2,12 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>VegeTourApp</title>
+        <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
         <style>
             html{
                 width: 100%;
@@ -12,26 +17,73 @@
                 background-size: cover;
                 background-repeat: no-repeat;
             }
+            .btn-style{
+                box-sizing: border-box;
+                padding: 8px 10px;
+                background-color: #62C89F;
+                color: white;
+                border: none;
+                cursor: pointer;
+                font-size: 0.8rem;
+                border-radius: 4px;
+            }
+            .input-style{
+                display: block;
+                width: 100%;
+                max-width: 200px;
+                padding: 8px 10px;
+                border: none;
+                margin: 10px auto;
+                border-radius: 4px;
+            }
+
         </style>
     </head>
 
     <body>
         <div style="width: 100%; text-align: center;">
-            <img style="margin: 20px 0; width: 200px;" src="logo5.png">
+            <img style="margin: 50px 0; width: 150px;" src="logo5.png">
         </div>
         <div style="width: 100%; text-align: center;">
             <div style="max-width: 500px; text-align: center; margin: auto; padding: 20px; background-color: rgba(255,255,255,0.7); border-radius: 20px;">
                 <h2>Reset Password</h2>
-                <div style="width: 100%;">
-                    <input onclick="alertParam()" type="button" value="Reset Password" />
-                </div>
+                <H3>Hello Dear, Please enter your password below to reset</H3>
+                
+                <input id="pwdvegeone" class="input-style" maxlength="20" type="password" placeholder="Password"/>
+                <input id="pwdvegetwo" class="input-style" maxlength="20" type="password" placeholder="Confirm Password"/>
+                <input class="btn-style" onclick="alertParam()" type="button" value="Reset Password" />
+                <p style="padding: 0" id="alertmsg"></p>
+
             </div>
         </div>
     </body>
     <script>
         function alertParam(){
             var urlParams = new URLSearchParams(window.location.search);
-            console.log(urlParams.get('id'));
+            if($('#pwdvegeone').val() == $('#pwdvegetwo').val()){
+                if($('#pwdvegeone').val().length >= 8){
+                    $.post( 
+                      "http://ec2-54-89-164-178.compute-1.amazonaws.com:10100/api/changepassworduser",
+                        // "http://localhost:10100/api/changepassworduser",
+                        { _id: urlParams.get('id'), password: $('#pwdvegeone').val() },
+                        function(data) {
+                            if(data.status = "success"){
+                                $('#pwdvegeone').val('');
+                                $('#pwdvegetwo').val('');
+                                $('#alertmsg').text('Password has been changed successfully');
+                            }else{
+                                $('#alertmsg').text('Error, Please try again');
+                            }
+                        }
+                    );
+                }else{
+                    $('#alertmsg').text('Passwords should be more than 8 digits');
+                }
+                
+            }else{
+                $('#alertmsg').text('Passwords do not match');
+            }
+            // console.log(urlParams.get('id'));
         }
     </script>
 </html>
